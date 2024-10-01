@@ -17,9 +17,6 @@ class Customers(SQLModel, table=True):
     email: Optional[str] = Field(default=None, sa_column=mapped_column('email', String(255)))
     phonenumber: Optional[str] = Field(default=None, sa_column=mapped_column('phonenumber', String(20)))
     address: Optional[str] = Field(default=None, sa_column=mapped_column('address', Text))
-    paidinadvance: Optional[Decimal] = Field(default=None, sa_column=mapped_column('paidinadvance', Numeric(10, 2), server_default=text('0')))
-    balance: Optional[Decimal] = Field(default=None, sa_column=mapped_column('balance', Numeric(10, 2), server_default=text('0')))
-    paid: Optional[Decimal] = Field(default=None, sa_column=mapped_column('paid', Numeric(10, 2), server_default=text('0')))
     createddate: Optional[datetime] = Field(default=None, sa_column=mapped_column('createddate', DateTime, server_default=text('CURRENT_TIMESTAMP')))
     createdby: Optional[UUID] = Field(default=None, sa_column=mapped_column('createdby', Uuid))
     updateddate: Optional[datetime] = Field(default=None, sa_column=mapped_column('updateddate', DateTime, server_default=text('CURRENT_TIMESTAMP')))
@@ -158,12 +155,12 @@ class Users(SQLModel, table=True):
     __table_args__ = (
         ForeignKeyConstraint(['roleid'], ['roles.roleid'], name='users_roleid_fkey'),
         PrimaryKeyConstraint('userid', name='users_pkey'),
-        UniqueConstraint('email', name='users_email_key')
+        UniqueConstraint('email', name='users_email_key'),
+        UniqueConstraint('username', name='users_username_key')
     )
 
     userid: UUID = Field(sa_column=mapped_column('userid', Uuid, server_default=text('uuid_generate_v4()')))
-    firstname: str = Field(sa_column=mapped_column('firstname', String(255), nullable=False))
-    lastname: str = Field(sa_column=mapped_column('lastname', String(255), nullable=False))
+    username: str = Field(sa_column=mapped_column('username', String(255), nullable=False))
     email: str = Field(sa_column=mapped_column('email', String(255), nullable=False))
     password: str = Field(sa_column=mapped_column('password', String(255), nullable=False))
     roleid: Optional[UUID] = Field(default=None, sa_column=mapped_column('roleid', Uuid))
@@ -246,10 +243,10 @@ class Projectpayments(SQLModel, table=True):
 class Projectstatus(SQLModel, table=True):
     __table_args__ = (
         ForeignKeyConstraint(['projectid'], ['projects.projectid'], name='projectstatus_projectid_fkey'),
-        PrimaryKeyConstraint('projectstatusid', name='projectstatus_pkey')
+        PrimaryKeyConstraint('statusid', name='projectstatus_pkey')
     )
 
-    projectstatusid: UUID = Field(sa_column=mapped_column('projectstatusid', Uuid, server_default=text('uuid_generate_v4()')))
+    statusid: UUID = Field(sa_column=mapped_column('statusid', Uuid, server_default=text('uuid_generate_v4()')))
     status: str = Field(sa_column=mapped_column('status', String(255), nullable=False))
     projectid: Optional[UUID] = Field(default=None, sa_column=mapped_column('projectid', Uuid))
     comments: Optional[str] = Field(default=None, sa_column=mapped_column('comments', Text))
@@ -296,9 +293,6 @@ class Vendorpayments(SQLModel, table=True):
     projectid: Optional[UUID] = Field(default=None, sa_column=mapped_column('projectid', Uuid))
     paymentmethod: Optional[str] = Field(default=None, sa_column=mapped_column('paymentmethod', String(255)))
     status: Optional[str] = Field(default=None, sa_column=mapped_column('status', String(255), server_default=text("'Pending'::character varying")))
-    paidinadvance: Optional[Decimal] = Field(default=None, sa_column=mapped_column('paidinadvance', Numeric(10, 2), server_default=text('0')))
-    balance: Optional[Decimal] = Field(default=None, sa_column=mapped_column('balance', Numeric(10, 2), server_default=text('0')))
-    paid: Optional[Decimal] = Field(default=None, sa_column=mapped_column('paid', Numeric(10, 2), server_default=text('0')))
     createddate: Optional[datetime] = Field(default=None, sa_column=mapped_column('createddate', DateTime, server_default=text('CURRENT_TIMESTAMP')))
     createdby: Optional[UUID] = Field(default=None, sa_column=mapped_column('createdby', Uuid))
     updateddate: Optional[datetime] = Field(default=None, sa_column=mapped_column('updateddate', DateTime, server_default=text('CURRENT_TIMESTAMP')))
